@@ -1,18 +1,15 @@
-from multiprocessing.resource_sharer import stop
-from textwrap import fill
-from turtle import back, window_height, window_width
 import pygame as py
 import random  
 import sys
 from sys import exit
 from pygame.locals import * 
 import time
+
 black = [0,0,0]
 height =  510
 width = 600
 transparent = (0, 0, 0, 0) #RGB, transparency
 window = py.display.set_mode((width, height)) 
-
 
 #images
 pipeimage = r"flappyBird\images\pipe.png"
@@ -43,32 +40,56 @@ if __name__ == "__main__":
 def game():
     print("game started")
     score = 0
+    ground = 0
     startingYPos = int(height/2)
+    print(startingYPos)
     startingXPos = int(width/5)
-    randomPipes()
-    pass
+    print(startingXPos)
+    upperPipes = randomPipes()
+    lowerPipes = randomPipes()
+
+    birdplayer_imageRect = birdplayer_image.get_rect()
+    sealevel_imagRect = sealevel_image.get_rect()
+    background_imageRect = background_image.get_rect()
+
+    window.blit(background_image,background_imageRect)
+    window.blit(sealevel_image, (0,startingYPos))
+    window.blit(birdplayer_image, (startingXPos, startingYPos-100))
+    py.display.flip()
+
+    bird_velocity_y = -9
+    bird_Max_Vel_Y = 10
+    bird_Min_Vel_Y = -8
+    birdAccY = 1
+    bird_flap_velocity = -8
+    bird_flapped = False
+
+    while True:
+        for event in py.event.get():
+            if event.type == K_UP or event.type == K_w:
+                #move the bird up 10 pixels
+                if startingYPos > 0:
+                    bird_velocity_y = bird_flap_velocity
+                    bird_flapped = True
+                #birdplayer_imageRect.y = birdplayer_imageRect.y + 10
 
 def randomPipes():
     pipeHeight = pipeImageUp.get_height()
     pipeWidth = pipeImageUp.get_width()
-    seperation = str(window_width)/4
-    randomHeight = random.randint(0, window_height - sealevel_image.get_height())
+    seperation = width/4
+    randomHeight = random.randint(0, height - sealevel_image.get_height())
 
-    y2 = seperation + random.randrange(0, window_height - sealevel_image.get_height())
-    pipeX = window_width + 10
+    y2 = seperation + random.randrange(0, height - sealevel_image.get_height())
+    pipeX = width + 10
     y1 = pipeHeight - y2 + seperation
 
     pipe = [
-        
         # upper Pipe
         {'x': pipeX, 'y': -y1},
-        
           # lower Pipe
         {'x': pipeX, 'y': y2}  
     ]
     return pipe
-
-
 
 while True:
     #bring up screen telling user to click space bar too start
@@ -98,5 +119,6 @@ while True:
                 window.blit(loading, loadingRect)
                 py.display.flip()
                 time.sleep(randomTime)
+                pass
                 game() 
 
